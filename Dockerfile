@@ -341,41 +341,42 @@ WORKDIR $TARGET-src
 RUN printf '3\n' | ./configure $EXTRA_FLAGS
 RUN ./compile $EXTRA_FLAGS
 
+###############################################################################
+## Install WPSPLUS 
 
-# ###############################################################################
-# ## Install WPSPLUS 
+WORKDIR $WRF_SOURCES
 
-# WORKDIR $WRF_SOURCES
+ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
+ARG TARGET=WRFPLUS
+ARG EXTRA_FLAGS=wrfplus
 
-# ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-# ARG TARGET=WRFPLUS
-# ARG EXTRA_FLAGS=wrfplus
+WORKDIR $TARGET
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz
 
-# WORKDIR $TARGET
-# RUN wget -c $TARGET_URL -O $TARGET.tar.gz
+RUN mkdir $TARGET-src
+RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
-# RUN mkdir $TARGET-src
-# RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+WORKDIR $TARGET-src
+RUN printf '18\n' | ./configure $EXTRA_FLAGS
+RUN ./compile $EXTRA_FLAGS
 
-# WORKDIR $TARGET-src
-# RUN printf '18\n' | ./configure $EXTRA_FLAGS
-# RUN ./compile $EXTRA_FLAGS
+ARG WRFPLUS_DIR=$WRF_PREFIX/$TARGET
 
-# ###############################################################################
-# ## Install WPSPLUS 4DVAR
+###############################################################################
+## Install WPSPLUS 4DVAR
 
-# WORKDIR $WRF_SOURCES
+WORKDIR $WRF_SOURCES
 
-# ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-# ARG TARGET=WRFPLUS
-# ARG EXTRA_FLAGS=
+ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
+ARG TARGET=WRFPLUS_4D
+ARG EXTRA_FLAGS=
 
-# WORKDIR $TARGET
-# RUN wget -c $TARGET_URL -O $TARGET.tar.gz
+WORKDIR $TARGET
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz
 
-# RUN mkdir $TARGET-src
-# RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN mkdir $TARGET-src
+RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
-# WORKDIR $TARGET-src
-# RUN printf '18\n' | ./configure 4dvar
-# RUN ./compile all_wrfvar
+WORKDIR $TARGET-src
+RUN printf '18\n' | ./configure 4dvar
+RUN ./compile all_wrfvar
