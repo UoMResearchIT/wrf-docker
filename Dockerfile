@@ -80,16 +80,20 @@ RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
 ###############################################################################
 ## Install JasPer
 
+WORKDIR $WRF_SOURCES
+
 ARG TARGET_URL=https://github.com/jasper-software/jasper/releases/download/version-2.0.33/jasper-2.0.33.tar.gz
 ARG TARGET=jasper
+ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
 RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
     mkdir $TARGET-src && \
     tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
-RUN cmake ../$TARGET-src/ -DJAS_ENABLED_SHARED=true -DJAS_ENABLE_LIBJPEG=true&& \
-    make -j$(nproc) && \
+WORKDIR $TARGET-build
+RUN cmake -DJAS_ENABLED_SHARED=true -DJAS_ENABLE_LIBJPEG=true ../$TARGET-src/ && \
+    make -j$(nproc)
 
 ENV JASPERLIB=$WRF_LIB
 ENV JASPERINC=$WRF_INC
