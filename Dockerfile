@@ -38,6 +38,7 @@ ENV WRF_INC=$WRF_PREFIX/include
 
 ENV LD_LIBRARY_PATH=$WRF_LIB
 
+
 ###############################################################################
 ## Install zlib v1.2.11
 
@@ -48,16 +49,14 @@ ARG TARGET=zlib
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ###############################################################################
 ## Install libpng
@@ -69,16 +68,14 @@ ARG TARGET=libpng
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ###############################################################################
 ## Install JasPer
@@ -87,16 +84,14 @@ ARG TARGET_URL=https://github.com/jasper-software/jasper/releases/download/versi
 ARG TARGET=jasper
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN cmake ../$TARGET-src/
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN cmake ../$TARGET-src/ && \
+    make -j$(nproc) && \
+    make install
 
 ENV JASPERLIB=$WRF_LIB
 ENV JASPERINC=$WRF_INC
@@ -111,16 +106,14 @@ ARG TARGET=hdf5
 ARG EXTRA_FLAGS="--enable-hl --enable-fortran"
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ENV HDF5=$WRF_PREFIX
 
@@ -134,16 +127,14 @@ ARG TARGET=netcdf-c
 ARG EXTRA_FLAGS=--disable-dap
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ###############################################################################
 ## Install NETCDF Fortran library
@@ -155,16 +146,14 @@ ARG TARGET=netcdf-fortran
 ARG EXTRA_FLAGS=--disable-shared
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ###############################################################################
 ## Install MPICH
@@ -176,16 +165,14 @@ ARG TARGET=mpich
 ARG EXTRA_FLAGS=--with-device=ch3
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS
-RUN make -j$(nproc)
-RUN make install
-#RUN make check
+RUN ../$TARGET-src/configure --prefix=$WRF_PREFIX $EXTRA_FLAGS && \
+    make -j$(nproc) && \
+    make install
 
 ###############################################################################
 ## Install NCEPlibs using install script
@@ -220,8 +207,8 @@ WORKDIR $TARGET
 RUN git clone -b dtc_post_v4.1.0 --recurse-submodules $TARGET_URL $TARGET-src
 
 WORKDIR $TARGET-src
-RUN printf '8\n' | ./configure
-RUN ./compile
+RUN printf '8\n' | ./configure && \
+    ./compile
 
 ###############################################################################
 ## Install ARWpost
@@ -233,16 +220,15 @@ ARG TARGET=ARWpost
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-src
-RUN sed -i -e 's/-lnetcdf/-lnetcdff -lnetcdf/g' src/Makefile
-RUN printf '3\n' | ./configure $EXTRA_FLAGS
-RUN sed -i -e 's/-C -P/-P/g' configure.arwp
-RUN ./compile
+RUN sed -i -e 's/-lnetcdf/-lnetcdff -lnetcdf/g' src/Makefile && \
+    printf '3\n' | ./configure $EXTRA_FLAGS && \
+    sed -i -e 's/-C -P/-P/g' configure.arwp && \
+     ./compile
 
 ###############################################################################
 ## Install OpenGrADS
@@ -258,10 +244,9 @@ ARG TARGET=GrADS
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 RUN mv $TARGET-src/* $WRF_PREFIX/$MAIN_TARGET
 
@@ -287,10 +272,9 @@ ARG TARGET=wgrib2
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 RUN mv $TARGET-src/bin/wgrib2 $WRF_PREFIX/$MAIN_TARGET/Contents
 
@@ -309,17 +293,16 @@ ARG TARGET=WRF
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-src
-RUN printf '34\n1\n' | ./configure $EXTRA_FLAGS
-RUN ./compile em_real
+RUN printf '34\n1\n' | ./configure $EXTRA_FLAGS && ./compile em_real
 
-RUN mkdir $WRF_PREFIX/$MAIN_TARGET
-RUN cp -r ./* $WRF_PREFIX/$MAIN_TARGET
+RUN mkdir $WRF_PREFIX/$MAIN_TARGET && \
+    cp -r ./* $WRF_PREFIX/$MAIN_TARGET
+
 ARG WRF_DIR=$WRF_PREFIX/$MAIN_TARGET
 
 ###############################################################################
@@ -332,14 +315,12 @@ ARG TARGET=WPS
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-src
-RUN printf '3\n' | ./configure $EXTRA_FLAGS
-RUN ./compile $EXTRA_FLAGS
+RUN printf '3\n' | ./configure $EXTRA_FLAGS && ./compile $EXTRA_FLAGS
 
 ###############################################################################
 ## Install WPSPLUS 
@@ -351,14 +332,12 @@ ARG TARGET=WRFPLUS
 ARG EXTRA_FLAGS=wrfplus
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-src
-RUN printf '18\n' | ./configure $EXTRA_FLAGS
-RUN ./compile $EXTRA_FLAGS
+RUN printf '18\n' | ./configure $EXTRA_FLAGS && ./compile $EXTRA_FLAGS
 
 ARG WRFPLUS_DIR=$WRF_PREFIX/$TARGET
 
@@ -372,11 +351,9 @@ ARG TARGET=WRFPLUS_4D
 ARG EXTRA_FLAGS=
 
 WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
+    mkdir $TARGET-src && \
+    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-src
-RUN printf '18\n' | ./configure 4dvar
-RUN ./compile all_wrfvar
+RUN printf '18\n' | ./configure 4dvar && ./compile all_wrfvar
