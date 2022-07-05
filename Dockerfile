@@ -83,7 +83,7 @@ RUN make install
 ###############################################################################
 ## Install JasPer
 
-ARG TARGET_URL=https://github.com/jasper-software/jasper/releases/download/version-3.0.3/jasper-3.0.3.tar.gz
+ARG TARGET_URL=https://github.com/jasper-software/jasper/releases/download/version-2.0.33/jasper-2.0.33.tar.gz
 ARG TARGET=jasper
 
 WORKDIR $TARGET
@@ -93,7 +93,7 @@ RUN mkdir $TARGET-src
 RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 
 WORKDIR $TARGET-build
-RUN cmake ../$TARGET-src/
+RUN cmake ../$TARGET-src/ -DJAS_ENABLED_SHARED=true -DJAS_ENABLE_LIBJPEG=true
 RUN make -j$(nproc)
 RUN make install
 #RUN make check
@@ -187,112 +187,18 @@ RUN make -j$(nproc)
 RUN make install
 #RUN make check
 
+
 ###############################################################################
-## Install NCEPlibs using install script
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/NCAR/NCEPlibs.git
-ARG TARGET=ncep
-ARG EXTRA_FLAGS=
-
-RUN git clone $TARGET_URL $TARGET
-WORKDIR $TARGET
-RUN mkdir nceplibs
+## general arguments
 
 ARG JASPER_INC=$WRF_PREFIX/include
 ARG PNG_INC=$WRF_PREFIX/include
 ARG NETCDF=$WRF_PREFIX/
-ARG NCEPLIBS_DIR=$(pwd)/nceplibs
 
-RUN printf 'y\n' | ./make_ncep_libs.sh -s linux -c gnu -d ./nceplibs -o 0 -m 1 -a upp
 
-###############################################################################
-# Install UPP
 
-WORKDIR $WRF_SOURCES
 
-ARG TARGET_URL=https://github.com/NOAA-EMC/UPP.git
-ARG TARGET=upp
-ARG EXTRA_FLAGS=
 
-WORKDIR $TARGET
-RUN git clone -b dtc_post_v4.1.0 --recurse-submodules $TARGET_URL $TARGET-src
-
-WORKDIR $TARGET-src
-RUN printf '8\n' | ./configure
-RUN ./compile
-
-###############################################################################
-## Install ARWpost
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=http://www2.mmm.ucar.edu/wrf/src/ARWpost_V3.tar.gz
-ARG TARGET=ARWpost
-ARG EXTRA_FLAGS=
-
-WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-WORKDIR $TARGET-src
-RUN sed -i -e 's/-lnetcdf/-lnetcdff -lnetcdf/g' src/Makefile
-RUN printf '3\n' | ./configure $EXTRA_FLAGS
-RUN sed -i -e 's/-C -P/-P/g' configure.arwp
-RUN ./compile
-
-###############################################################################
-## Install OpenGrADS
-
-WORKDIR $WRF_SOURCES
-ARG MAIN_TARGET=GrADS
-RUN mkdir -p $WRF_PREFIX/$MAIN_TARGET/Contents
-
-## Main tar
-
-ARG TARGET_URL=https://sourceforge.net/projects/opengrads/files/grads2/2.2.1.oga.1/Linux%20%2864%20Bits%29/opengrads-2.2.1.oga.1-bundle-x86_64-pc-linux-gnu-glibc_2.17.tar.gz
-ARG TARGET=GrADS
-ARG EXTRA_FLAGS=
-
-WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-RUN mv $TARGET-src/* $WRF_PREFIX/$MAIN_TARGET
-
-## g2ctl
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=ftp://ftp.cpc.ncep.noaa.gov/wd51we/g2ctl/g2ctl
-ARG TARGET=g2ctl
-ARG EXTRA_FLAGS=
-
-WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET
-
-RUN mv $TARGET $WRF_PREFIX/$MAIN_TARGET/Contents
-
-## wgrib2
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://sourceforge.net/projects/opengrads/files/wgrib2/0.1.9.4/wgrib2-v0.1.9.4-bin-x86_64-glibc2.5-linux-gnu.tar.gz
-ARG TARGET=wgrib2
-ARG EXTRA_FLAGS=
-
-WORKDIR $TARGET
-RUN wget -c $TARGET_URL -O $TARGET.tar.gz
-
-RUN mkdir $TARGET-src
-RUN tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-RUN mv $TARGET-src/bin/wgrib2 $WRF_PREFIX/$MAIN_TARGET/Contents
 
 ###############################################################################
 ## Install WRF v4.3.3
