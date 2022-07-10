@@ -93,7 +93,8 @@ RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
 
 WORKDIR $TARGET-build
 RUN cmake -DJAS_ENABLED_SHARED=true -DJAS_ENABLE_LIBJPEG=true ../$TARGET-src/ && \
-    make -j$(nproc)
+    make -j$(nproc) && \
+    make install
 
 ENV JASPERLIB=$WRF_LIB
 ENV JASPERINC=$WRF_INC
