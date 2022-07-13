@@ -263,3 +263,8 @@ RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
 
 WORKDIR $TARGET-src
 RUN printf '18\n' | ./configure 4dvar && ./compile all_wrfvar
+
+###############################################################################
+## Return to main directory
+
+WORKDIR /
