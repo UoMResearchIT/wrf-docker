@@ -236,91 +236,10 @@ EOF_MPICH
 ###############################################################################
 ## general arguments
 
-ARG JASPER_INC=$WRF_PREFIX/include
-ARG PNG_INC=$WRF_PREFIX/include
-ARG NETCDF=$WRF_PREFIX/
+ENV JASPER_INC=$WRF_PREFIX/include
+ENV PNG_INC=$WRF_PREFIX/include
+ENV NETCDF=$WRF_PREFIX/
 
-###############################################################################
-## Install WRF v4.3.3
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-ARG TARGET=WRF
-ARG EXTRA_FLAGS=
-
-RUN <<EOF_WRF
-mkdir $TARGET
-cd $TARGET
-
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-cd $TARGET-src
-printf '34\n1\n' | ./configure $EXTRA_FLAGS
-./compile em_real
-EOF_WRF
-
-ARG WRF_DIR=$WRF_SOURCES/$TARGET/$TARGET-src
-
-###############################################################################
-## Install WPS
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/wrf-model/WPS/archive/refs/tags/v4.3.1.tar.gz
-ARG TARGET=WPS
-ARG EXTRA_FLAGS=
-
-RUN <<EOF_WPS
-mkdir $TARGET
-cd $TARGET
-
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-cd $TARGET-src
-printf '3\n' | ./configure $EXTRA_FLAGS
-./compile $EXTRA_FLAGS
-EOF_WPS
-
-###############################################################################
-## Install WPSPLUS 
-
-#WORKDIR $WRF_SOURCES
-#
-#ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-#ARG TARGET=WRFPLUS
-#ARG EXTRA_FLAGS=wrfplus
-#
-#WORKDIR $TARGET
-#RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
-#    mkdir $TARGET-src && \
-#    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-#
-#WORKDIR $TARGET-src
-#RUN printf '18\n' | ./configure $EXTRA_FLAGS && ./compile $EXTRA_FLAGS
-#
-#ARG WRFPLUS_DIR=$WRF_PREFIX/$TARGET
-
-###############################################################################
-## Install WPSPLUS 4DVAR
-
-#WORKDIR $WRF_SOURCES
-#
-#ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-#ARG TARGET=WRFPLUS_4D
-#ARG EXTRA_FLAGS=
-#
-#WORKDIR $TARGET
-#RUN wget -c $TARGET_URL -O $TARGET.tar.gz && \
-#    mkdir $TARGET-src && \
-#    tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-#
-#WORKDIR $TARGET-src
-#RUN printf '18\n' | ./configure 4dvar && ./compile all_wrfvar
 
 ###############################################################################
 ## Return to main directory
