@@ -19,6 +19,7 @@ cd $TARGET
 wget -c $TARGET_URL -O $TARGET.tar.gz
 mkdir $TARGET-src
 tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+rm $TARGET.tar.gz
 
 cd $TARGET-src
 printf '34\n1\n' | ./configure $EXTRA_FLAGS
@@ -43,6 +44,7 @@ cd $TARGET
 wget -c $TARGET_URL -O $TARGET.tar.gz
 mkdir $TARGET-src
 tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+rm $TARGET.tar.gz
 
 cd $TARGET-src
 printf '3\n' | ./configure $EXTRA_FLAGS

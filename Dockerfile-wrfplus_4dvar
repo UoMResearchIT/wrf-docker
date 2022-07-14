@@ -4,52 +4,6 @@ FROM wrf_intermediate:latest
 
 
 ###############################################################################
-## Install WRF v4.3.3
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-ARG TARGET=WRF
-ARG EXTRA_FLAGS=
-
-RUN <<EOF_WRF
-mkdir $TARGET
-cd $TARGET
-
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-cd $TARGET-src
-printf '34\n1\n' | ./configure $EXTRA_FLAGS
-./compile em_real
-EOF_WRF
-
-ARG WRF_DIR=$WRF_SOURCES/$TARGET/$TARGET-src
-
-###############################################################################
-## Install WPS
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/wrf-model/WPS/archive/refs/tags/v4.3.1.tar.gz
-ARG TARGET=WPS
-ARG EXTRA_FLAGS=
-
-RUN <<EOF_WPS
-mkdir $TARGET
-cd $TARGET
-
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-
-cd $TARGET-src
-printf '3\n' | ./configure $EXTRA_FLAGS
-./compile $EXTRA_FLAGS
-EOF_WPS
-
-###############################################################################
 ## Install WRFPLUS 
 
 WORKDIR $WRF_SOURCES
@@ -64,6 +18,7 @@ cd $TARGET
 wget -c $TARGET_URL -O $TARGET.tar.gz
 mkdir $TARGET-src
 tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+rm $TARGET.tar.gz
 
 cd $TARGET-src
 printf '18\n' | ./configure $EXTRA_FLAGS
@@ -90,6 +45,7 @@ cd $TARGET
 wget -c $TARGET_URL -O $TARGET.tar.gz
 mkdir $TARGET-src
 tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+rm $TARGET.tar.gz
 
 cd $TARGET-src
 printf '18\n' | ./configure 4dvar
