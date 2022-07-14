@@ -262,7 +262,7 @@ printf '34\n1\n' | ./configure $EXTRA_FLAGS
 ./compile em_real
 EOF_WRF
 
-ARG WRF_DIR=$WRF_SOURCES/$TARGET
+ARG WRF_DIR=$WRF_SOURCES/$TARGET/$TARGET-src
 
 ###############################################################################
 ## Install WPS
