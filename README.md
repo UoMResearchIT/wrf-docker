@@ -8,6 +8,15 @@ Main page: https://github.com/wrf-model/WRF
 
 * Docker (version 18.09 or later)
 
+## Pre-built images
+
+Images are available at the Dockerhub:
+
+* [wrf_wps](https://hub.docker.com/repository/docker/oliverwoolland/wrf_wps) provides the main WRF application
+* [wrfplus_4dvar](https://hub.docker.com/repository/docker/oliverwoolland/wrfplus_4dvar) provides the WRFPLUS and WRF-4DVar extensions
+
+An [intermediate](https://hub.docker.com/repository/docker/oliverwoolland/wrf_intermediate) container is available which containerises the dependancies for WRF
+
 ## Usage
 
 Begin with building the base container, this needs to be named `wrf_intermediate`:
