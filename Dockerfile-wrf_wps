@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.4.2
 
-FROM wrf_intermediate:latest
+FROM ghcr.io/uomresearchit/wrf-libraries as wrf_wps_build
 
 
 ###############################################################################
@@ -24,6 +24,8 @@ rm $TARGET.tar.gz
 cd $TARGET-src
 printf '34\n1\n' | ./configure $EXTRA_FLAGS
 ./compile em_real
+
+rm run/*exe
 EOF_WRF
 
 ARG WRF_DIR=$WRF_SOURCES/$TARGET/$TARGET-src
@@ -52,5 +54,18 @@ printf '3\n' | ./configure $EXTRA_FLAGS
 EOF_WPS
 
 ################################################################################
+
+FROM ghcr.io/uomresearchit/wrf-libraries as wrf_final
+
+COPY --from=wrf_wps_build /WRF-SOURCES/WPS/WPS-src/ /WPS-run
+COPY --from=wrf_wps_build /WRF-SOURCES/WPS/WPS-src/*exe /usr/local/bin/
+COPY --from=wrf_wps_build /WRF-SOURCES/WRF/WRF-src/main/*exe /usr/local/bin/
+COPY --from=wrf_wps_build /WRF-SOURCES/WRF/WRF-src/run /WRF-run
+
+
+LABEL version.wrf=4.3.3
+LABEL org.opencontainers.image.description="WRF and WPS executables and run directories"
+LABEL org.opencontainers.image.source="https://github.com/UoMResearchIT/wrf-docker"
+
 
 WORKDIR /
