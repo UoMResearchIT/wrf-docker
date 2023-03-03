@@ -1,59 +1,54 @@
 # syntax=docker/dockerfile:1.4.2
 
-FROM wrf_intermediate:latest
+FROM ghcr.io/uomresearchit/wrf-libraries
 
 
 ###############################################################################
-## Install WRFPLUS 
+## Install WRFPLUS 4DVAR
 
 WORKDIR $WRF_SOURCES
 
 ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-ARG TARGET=WRFPLUS
-ARG EXTRA_FLAGS=wrfplus
+ARG TARG_PLUS=WRFPLUS
+ARG TARGET=WRF4DVAR
 
-RUN <<EOF_WRFPLUS
-mkdir $TARGET
-cd $TARGET
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-rm $TARGET.tar.gz
-
-cd $TARGET-src
-printf '18\n' | ./configure $EXTRA_FLAGS
-./compile $EXTRA_FLAGS
-
-EOF_WRFPLUS
-
-ARG WRFPLUS_DIR=$WRF_PREFIX/$TARGET
-
-
-###############################################################################
-## Install WPSPLUS 4DVAR
-
-WORKDIR $WRF_SOURCES
-
-ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
-ARG TARGET=WRFPLUS_4D
-ARG EXTRA_FLAGS=
+ARG WRFPLUS_DIR=$WRF_SOURCES/$TARG_PLUS
 
 RUN <<EOF_WRF4DVAR
 mkdir $TARGET
-cd $TARGET
-
 wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
+tar -xf $TARGET.tar.gz -C $TARGET --strip-components=1
 rm $TARGET.tar.gz
 
-cd $TARGET-src
+cp -a $TARGET $TARG_PLUS
+
+cd $TARG_PLUS
+# compile WRFPLUS
+printf '18\n' | ./configure wrfplus
+./compile wrfplus
+
+cd ../$TARGET
+# compile WRF4DVAR
 printf '18\n' | ./configure 4dvar
 ./compile all_wrfvar
+
+# move generated binaries to /usr/local/bin/
+cd ..
+mv $TARG_PLUS/main/wrfplus.exe /usr/local/bin/
+mv $TARGET/var/build/*exe $TARGET/var/obsproc/*exe /usr/local/bin/
+
+# remove build directories
+rm -rf $TARG_PLUS
+rm -rf $TARGET
 
 EOF_WRF4DVAR
 
 ###############################################################################
 ## Return to main directory
+
+LABEL version.wrf=4.3.3
+LABEL org.opencontainers.image.description="WRF-Plus and WRF-4DVAR executables"
+LABEL org.opencontainers.image.source="https://github.com/UoMResearchIT/wrf-docker"
+
 
 WORKDIR /
