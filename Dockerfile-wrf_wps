@@ -39,7 +39,10 @@ ARG TARGET_URL=https://github.com/wrf-model/WPS/archive/refs/tags/v4.3.1.tar.gz
 ARG TARGET=WPS
 ARG EXTRA_FLAGS=
 
+ADD WPS-nocolon.patch /WRF-SOURCES/WPS-nocolon.patch
+
 RUN <<EOF_WPS
+DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y patch 
 mkdir $TARGET
 cd $TARGET
 
@@ -49,6 +52,7 @@ tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 rm $TARGET.tar.gz
 
 cd $TARGET-src
+patch -p1 < /WRF-SOURCES/WPS-nocolon.patch
 printf '3\n' | ./configure $EXTRA_FLAGS
 ./compile $EXTRA_FLAGS
 EOF_WPS

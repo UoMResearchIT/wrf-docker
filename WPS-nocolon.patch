@@ -1,0 +1,113 @@
+diff --git a/metgrid/src/read_met_module.F b/metgrid/src/read_met_module.F
+index 269ebb9..50f94cb 100644
+--- a/metgrid/src/read_met_module.F
++++ b/metgrid/src/read_met_module.F
+@@ -34,7 +34,7 @@ module read_met_module
+       !  1) BUILD FILENAME BASED ON TIME 
+       filename = ' '
+       if (.not. source_is_constant) then 
+-         write(filename, '(a)') trim(fg_source)//':'//trim(datestr)
++         write(filename, '(a)') trim(fg_source)//'_'//trim(datestr)
+       else
+          write(filename, '(a)') trim(fg_source)
+       end if
+diff --git a/metgrid/src/write_met_module.F b/metgrid/src/write_met_module.F
+index ffdba35..2a7be5d 100644
+--- a/metgrid/src/write_met_module.F
++++ b/metgrid/src/write_met_module.F
+@@ -33,7 +33,7 @@ module write_met_module
+       !  1) BUILD FILENAME BASED ON TIME 
+       met_out_filename = ' '
+       if (.not. source_is_constant) then 
+-         write(met_out_filename, '(a)') trim(fg_source)//':'//trim(datestr)
++         write(met_out_filename, '(a)') trim(fg_source)//'_'//trim(datestr)
+       else
+          write(met_out_filename, '(a)') trim(fg_source)
+       end if
+diff --git a/ungrib/src/datint.F b/ungrib/src/datint.F
+index 3a04105..906cf60 100644
+--- a/ungrib/src/datint.F
++++ b/ungrib/src/datint.F
+@@ -82,7 +82,7 @@ subroutine datint(fuldates, nful, hstart, ntimes, interval, out_format, prefix)
+ 	   call mprintf(.true.,LOGFILE,"B Time Difference = %f",f1=float(intervalB) / 3600.)
+            AWT = 1. - (float(intervalA)/float(intervalA+intervalB))
+ 
+-           open(10, file=trim(prefix)//':'//fuldates(iful)(1:datelen), form='unformatted', &
++           open(10, file=trim(prefix)//'_'//fuldates(iful)(1:datelen), form='unformatted', &
+                 status='old')
+            call clear_storage
+            READLOOP1 : do
+@@ -149,9 +149,9 @@ subroutine datint(fuldates, nful, hstart, ntimes, interval, out_format, prefix)
+            enddo READLOOP1
+ 44         close(10)
+ 
+-           open(10, file=trim(prefix)//':'//fuldates(iful+1)(1:datelen), status='old', &
++           open(10, file=trim(prefix)//'_'//fuldates(iful+1)(1:datelen), status='old', &
+                 form = 'unformatted')
+-           open(11, file=trim(prefix)//':'//hdate(1:datelen), status='new', form='unformatted')
++           open(11, file=trim(prefix)//'_'//hdate(1:datelen), status='new', form='unformatted')
+            READLOOP2 : do
+               read (10,END=45) ifv
+               if ( ifv .eq. 5) then     ! WPS
+diff --git a/ungrib/src/output.F b/ungrib/src/output.F
+index 2c802fd..68b7aa8 100644
+--- a/ungrib/src/output.F
++++ b/ungrib/src/output.F
+@@ -132,27 +132,27 @@ subroutine output(hdate, nlvl, maxlvl, plvl, interval, iflag, out_format, prefix
+   
+   if (iflag.eq.1) then
+      if (nfiles.eq.0) then
+-        open(iunit, file=trim(get_path(prefix))//'PFILE:'//HDATE(1:datelen), form='unformatted', &
++        open(iunit, file=trim(get_path(prefix))//'PFILE_'//HDATE(1:datelen), form='unformatted', &
+              position='REWIND')
+         nfiles = nfiles + 1
+         filedates(nfiles)(1:datelen) = hdate(1:datelen)
+      else
+         DOFILES : do k = 1, nfiles
+            if (hdate(1:datelen).eq.filedates(k)(1:datelen)) then
+-              open(iunit, file=trim(get_path(prefix))//'PFILE:'//HDATE(1:datelen), form='unformatted',&
++              open(iunit, file=trim(get_path(prefix))//'PFILE_'//HDATE(1:datelen), form='unformatted',&
+                    position='APPEND')
+            endif
+         enddo DOFILES
+         inquire (iunit, OPENED=LOPEN)
+         if (.not. LOPEN) then
+-           open(iunit, file=trim(get_path(prefix))//'PFILE:'//HDATE(1:datelen), form='unformatted', &
++           open(iunit, file=trim(get_path(prefix))//'PFILE_'//HDATE(1:datelen), form='unformatted', &
+                 position='REWIND')
+            nfiles = nfiles + 1
+            filedates(nfiles)(1:datelen) = hdate(1:datelen)
+         endif
+      endif
+   else if (iflag.eq.2) then
+-     open(iunit, file=trim(prefix)//':'//HDATE(1:datelen), form='unformatted', &
++     open(iunit, file=trim(prefix)//'_'//HDATE(1:datelen), form='unformatted', &
+           position='REWIND')
+   endif
+ 
+diff --git a/ungrib/src/rrpr.F b/ungrib/src/rrpr.F
+index 16ee85b..fe1cfc4 100644
+--- a/ungrib/src/rrpr.F
++++ b/ungrib/src/rrpr.F
+@@ -132,7 +132,7 @@ subroutine rrpr(hstart, ntimes, interval, nlvl, maxlvl, plvl, &
+          call mprintf(.true.,INFORM, &
+             "RRPR Processing : %s",s1=filedates(n)(1:datelen))
+        endif
+-       open(iunit, file=trim(get_path(prefix))//'PFILE:'//filedates(n)(1:datelen), &
++       open(iunit, file=trim(get_path(prefix))//'PFILE_'//filedates(n)(1:datelen), &
+           form='unformatted',status='old')
+ 
+ ! Read the file:
+diff --git a/ungrib/src/ungrib.F b/ungrib/src/ungrib.F
+index 08296fc..dad1160 100644
+--- a/ungrib/src/ungrib.F
++++ b/ungrib/src/ungrib.F
+@@ -388,7 +388,7 @@ program ungrib
+ 
+ ! Now delete the temporary files:
+ 
+-  call file_delete(filedates, nfiles, trim(get_path(prefix))//'PFILE:', interval)
++  call file_delete(filedates, nfiles, trim(get_path(prefix))//'PFILE_', interval)
+ 
+ ! And Now we are done:
+ 
