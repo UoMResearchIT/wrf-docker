@@ -42,4 +42,18 @@ Images are available on the GitHub Container Repository:
 * [wrf-wps](https://github.com/UoMResearchIT/wrf-docker/pkgs/container/wrf-wps) provides the main WRF and WPS applications
 * [wrf-4dvar](https://github.com/UoMResearchIT/wrf-docker/pkgs/container/wrf-4dvar) provides the WRFPLUS and WRF-4DVar extensions
 
+## Copyright & Licensing
 
+### WRF
+
+WRF was developed at the National Centre for Atmospheric Research (NCAR) and
+released under an [open-source license](https://github.com/wrf-model/WRF/blob/master/LICENSE.txt).
+
+### Docker scripts
+
+The docker build scripts have been developed by the [Research IT](https://research-it.manchester.ac.uk/) 
+at the [University of Manchester](https://www.manchester.ac.uk/).
+
+Copyright 2023 [University of Manchester, UK](https://www.manchester.ac.uk/).
+
+Licensed under the MIT license, see the LICENSE file for details.
