@@ -31,7 +31,7 @@ the [Air Quality Prediction](https://workflowhub.eu/projects/103) group.
 Executables are placed within the `/usr/local/bin` directory. WRF and WPS run directories
 are provided within the container at `/WRF-run/` and `/WPS-run/`.
 
-### wrf-4dvar container
+#### wrf-4dvar container
 
 Executables are placed within the `/usr/local/bin` directory.
 
