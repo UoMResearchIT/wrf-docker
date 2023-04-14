@@ -35,7 +35,11 @@ printf '18\n' | ./configure 4dvar
 # move generated binaries to /usr/local/bin/
 cd ..
 mv $TARG_PLUS/main/wrfplus.exe /usr/local/bin/
-mv $TARGET/var/build/*exe $TARGET/var/obsproc/*exe /usr/local/bin/
+mv $TARGET/var/build/*exe $TARGET/var/obsproc/src/*exe /usr/local/bin/
+
+# move run directory to /WRFPLUS-RUN
+rm $TARG_PLUS/run/*exe
+mv $TARG_PLUS/run /WRFPLUS-RUN
 
 # remove build directories
 rm -rf $TARG_PLUS
