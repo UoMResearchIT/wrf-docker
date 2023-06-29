@@ -1,7 +1,8 @@
-# WRF, WPS, and WRF-4DVAR docker containers
+# WRF, WPS, WRF-Chem, and WRF-4DVAR docker containers
 
 These are container images for the [Weather and Research Forecasting](https://github.com/wrf-model/WRF)
 model. The `wrf-wps` container contains the WRF and WPS programs, while the
+`wrf-chem` container containst the WRF-Chem program, and the
 `wrf-4dvar` container contains the WRF-4DVAR programs. They are
 designed for use with [Common Workflow Language](https://www.commonwl.org/) (CWL) tool
 descriptors and workflows.
@@ -40,6 +41,7 @@ Executables are placed within the `/usr/local/bin` directory.
 Images are available on the GitHub Container Repository:
 
 * [wrf-wps](https://github.com/UoMResearchIT/wrf-docker/pkgs/container/wrf-wps) provides the main WRF and WPS applications
+* [wrf-chem](https://github.com/UoMResearchIT/wrf-docker/pkgs/container/wrf-chem) provides the WRF-Chem application
 * [wrf-4dvar](https://github.com/UoMResearchIT/wrf-docker/pkgs/container/wrf-4dvar) provides the WRFPLUS and WRF-4DVar extensions
 
 ## Copyright & Licensing
