@@ -54,7 +54,7 @@ released under an [open-source license](https://github.com/wrf-model/WRF/blob/ma
 ### Docker scripts
 
 The docker build scripts have been developed by the [Research IT](https://research-it.manchester.ac.uk/) 
-at the [University of Manchester](https://www.manchester.ac.uk/).
+department at the [University of Manchester](https://www.manchester.ac.uk/).
 
 Copyright 2023 [University of Manchester, UK](https://www.manchester.ac.uk/).
 
