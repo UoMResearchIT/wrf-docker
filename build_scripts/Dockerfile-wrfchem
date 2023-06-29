@@ -1,0 +1,55 @@
+# syntax=docker/dockerfile:1.4.2
+
+FROM ghcr.io/uomresearchit/wrf-libraries
+
+
+###############################################################################
+## Install WRFChem
+
+WORKDIR $WRF_SOURCES
+
+ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
+ARG TARGET=WRF
+
+ARG WRF_DIR=$WRF_SOURCES/$TARGET
+
+RUN <<EOF_WRFChem
+DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y flex bison 
+
+mkdir $TARGET
+wget -c $TARGET_URL -O $TARGET.tar.gz
+tar -xf $TARGET.tar.gz -C $TARGET --strip-components=1
+rm $TARGET.tar.gz
+
+cd $TARGET
+# Set WRF-Chem compiler flags and library paths
+export FLEX_LIB_DIR=/usr/lib/x86_64-linux-gnu/
+export YACC="yacc -d"
+export WRF_CHEM=1
+export WRF_KPP=1
+# compile WRF-Chem
+printf '34\n1\n' | ./configure $EXTRA_FLAGS
+./compile em_real
+
+# move generated binaries to /usr/local/bin/
+cd ..
+mv $TARGET/main/*.exe /usr/local/bin/
+
+# move run directory to /WRFChem-RUN
+rm $TARGET/run/*exe
+mv $TARGET/run /WRFChem-RUN
+
+# remove build directories
+rm -rf $TARGET
+
+EOF_WRFChem
+
+###############################################################################
+## Return to main directory
+
+LABEL version.wrf=4.3.3
+LABEL org.opencontainers.image.description="WRF-Chem executables"
+LABEL org.opencontainers.image.source="https://github.com/UoMResearchIT/wrf-docker"
+
+
+WORKDIR /

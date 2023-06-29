@@ -2,9 +2,10 @@
 
 This build system creates docker containers for WRF.
 
-There are scripts for building two containers:
+There are scripts for building three containers:
 1. WRF & WPS combined container
-2. WRF-4VAR container
+2. WRF-Chem container
+3. WRF-4VAR container
 
 Main page: https://github.com/wrf-model/WRF
 
@@ -20,6 +21,11 @@ To build the WRF/WPS container use these commands:
 * `DOCKER_BUILDKIT=1 docker build . -t 'wrf_final' -f Dockerfile-wrf_wps`
 * `docker image tag wrf_final ghcr.io/uomresearchit/wrf-wps:latest`
 * `docker image tag wrf_final ghcr.io/uomresearchit/wrf-wps:<WRF version>`
+
+To build the WRF-Chem container use these commands:
+* `DOCKER_BUILDKIT=1 docker build . -t 'wrf_chem' -f Dockerfile-wrfchem`
+* `docker image tag wrf_chem ghcr.io/uomresearchit/wrf-chem:latest`
+* `docker image tag wrf_chem ghcr.io/uomresearchit/wrf-chem:<WRF version>`
 
 To build the WRF-4DVAR container use these commands:
 * `DOCKER_BUILDKIT=1 docker build . -t 'wrfplus_4dvar' -f Dockerfile-wrfplus_4dvar`
