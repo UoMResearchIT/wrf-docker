@@ -4,22 +4,23 @@ FROM ghcr.io/uomresearchit/wrf-libraries as wrf_wps_build
 
 
 ###############################################################################
-## Install WRF v4.3.3
+## Install WRF v3.9.1.1
 
 WORKDIR $WRF_SOURCES
 
-ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
+#ARG TARGET_URL=https://github.com/wrf-model/WRF/archive/v4.3.3.tar.gz 
+# Before running this script you need to create the WRF directory.
+# 1. git clone https://github.com/wrf-model/WRF.git
+# 2. cd WRF
+# 3. git fetch --all --tags
+# 4. git checkout tags/V3.9.1.1
+# 5. cd ..
+COPY WRF WRF/WRF-src
 ARG TARGET=WRF
 ARG EXTRA_FLAGS=
 
 RUN <<EOF_WRF
-mkdir $TARGET
 cd $TARGET
-
-wget -c $TARGET_URL -O $TARGET.tar.gz
-mkdir $TARGET-src
-tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
-rm $TARGET.tar.gz
 
 cd $TARGET-src
 printf '34\n1\n' | ./configure $EXTRA_FLAGS
@@ -35,7 +36,7 @@ ARG WRF_DIR=$WRF_SOURCES/$TARGET/$TARGET-src
 
 WORKDIR $WRF_SOURCES
 
-ARG TARGET_URL=https://github.com/wrf-model/WPS/archive/refs/tags/v4.3.1.tar.gz
+ARG TARGET_URL=https://github.com/wrf-model/WPS/archive/refs/tags/v3.9.1.tar.gz
 ARG TARGET=WPS
 ARG EXTRA_FLAGS=
 
@@ -46,14 +47,35 @@ DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y patch
 mkdir $TARGET
 cd $TARGET
 
+
 wget -c $TARGET_URL -O $TARGET.tar.gz
 mkdir $TARGET-src
 tar -xf $TARGET.tar.gz -C $TARGET-src --strip-components=1
 rm $TARGET.tar.gz
 
 cd $TARGET-src
+ln -s $WRF_DIR ../WRFV3
 patch -p1 < /WRF-SOURCES/WPS-nocolon.patch
+
+#### sundry backported fixes
+# ungrib/src/ngl/g2/intmath.f
+sed '172s/iand(i,i-1)/iand(i,i-1_2)/' ungrib/src/ngl/g2/intmath.f > ungrib/src/ngl/g2/intmath.f.tmp
+sed '207s/iand(i,i-1)/iand(i,i-1_1)/' ungrib/src/ngl/g2/intmath.f.tmp > ungrib/src/ngl/g2/intmath.f.tmp2
+rm ungrib/src/ngl/g2/intmath.f.tmp
+mv ungrib/src/ngl/g2/intmath.f.tmp2 ungrib/src/ngl/g2/intmath.f
+# ungrib/src/ngl/g2/enc_jpeg2000.c
+sed 's/image.inmem_=1;//' ungrib/src/ngl/g2/enc_jpeg2000.c > ungrib/src/ngl/g2/enc_jpeg2000.c.tmp
+mv ungrib/src/ngl/g2/enc_jpeg2000.c.tmp ungrib/src/ngl/g2/enc_jpeg2000.c
+
+#### configure
 printf '3\n' | ./configure $EXTRA_FLAGS
+
+#### add fixes for gcc compilers (post configure step)
+# configure.wps
+sed 's/-f90=gfortran//' configure.wps > configure.wps.tmp2
+mv configure.wps.tmp2 configure.wps
+
+
 ./compile $EXTRA_FLAGS
 EOF_WPS
 
